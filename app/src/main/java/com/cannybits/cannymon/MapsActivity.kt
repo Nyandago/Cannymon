@@ -10,6 +10,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.cannybits.cannymon.databinding.ActivityMapsBinding
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -42,7 +44,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add a marker in Sydney and move the camera
         val dsm = LatLng(-6.7924, 39.2083)
-        mMap!!.addMarker(MarkerOptions().position(dsm).title("Marker in Dar es Salaam"))
-        mMap!!.moveCamera(CameraUpdateFactory.newLatLng(dsm))
+        mMap!!.addMarker(MarkerOptions()
+            .position(dsm)
+            .title("Canny Bits")
+            .snippet("my current location")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario))
+        )
+        mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,10f))
     }
 }
