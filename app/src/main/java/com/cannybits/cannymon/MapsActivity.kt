@@ -1,6 +1,11 @@
 package com.cannybits.cannymon
 
+import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,12 +21,14 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.cannybits.cannymon.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import java.lang.Exception
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     var ACCESS_LOCATION = 123
+    var location: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,18 +54,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Dar Es Salaam and move the camera
-        val dsm = LatLng(-6.7924, 39.2083)
-        mMap!!.addMarker(MarkerOptions()
-            .position(dsm)
-            .title("Canny Bits")
-            .snippet("my current location")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario))
-        )
-        mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,10f))
+
 
         checkPermission()
     }
+
+
 
     fun checkPermission(){
         if(Build.VERSION.SDK_INT >= 23){
@@ -74,6 +75,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     fun getUserLocation(){
         Toast.makeText(this,"My Current Location On",Toast.LENGTH_LONG).show()
+
+        var myLocation = MyLocationListener()
+        var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3,3f,myLocation)
+
+        var myThread = myThread()
+        myThread.start()
     }
 
     override fun onRequestPermissionsResult(
@@ -92,5 +118,63 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    inner class MyLocationListener : LocationListener{
+
+        constructor(){
+            location = Location("Start")
+            location!!.longitude = 0.0
+            location!!.latitude = 0.0
+        }
+
+        override fun onLocationChanged(p0: Location) {
+          location = p0
+        }
+
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+           // super.onStatusChanged(provider, status, extras)
+        }
+
+        override fun onProviderEnabled(provider: String) {
+          //  super.onProviderEnabled(provider)
+        }
+
+        override fun onProviderDisabled(provider: String) {
+          //  super.onProviderDisabled(provider)
+        }
+    }
+
+    inner class myThread : Thread {
+        constructor():super(){
+
+        }
+
+        override fun run(){
+            while(true){
+
+                try {
+                    runOnUiThread(){
+
+
+                        mMap!!.clear()
+
+
+                    // Add a marker in myLocation and move the camera
+                    val dsm = LatLng(location!!.longitude, location!!.latitude)
+                    mMap!!.addMarker(MarkerOptions()
+                        .position(dsm)
+                        .title("Canny Bits")
+                        .snippet("my current location")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario))
+                    )
+                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,10f))
+                }
+                    Thread.sleep(1000)
+                } catch (ex: Exception){
+
+                }
+            }
+        }
     }
 }
