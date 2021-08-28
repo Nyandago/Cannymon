@@ -29,6 +29,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     var ACCESS_LOCATION = 123
     var location: Location? = null
+    var listPokemon = ArrayList<Pokemon>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,21 +43,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker Dar Es Salaam, Tanzania.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
 
 
         checkPermission()
+        loadPokemon()
     }
 
 
@@ -158,17 +152,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
                         mMap!!.clear()
-
-
-                    // Add a marker in myLocation and move the camera
+                        //show me
                     val dsm = LatLng(location!!.longitude, location!!.latitude)
                     mMap!!.addMarker(MarkerOptions()
                         .position(dsm)
                         .title("Canny Bits")
                         .snippet("my current location")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario))
-                    )
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,10f))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario)))
+                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,2f))
+
+                       // show other pokemons
+                        for (i in 0..listPokemon.size-1){
+                            var newPokemon = listPokemon[i]
+
+                            if (newPokemon.isCatch == false) {
+                                val newPokemonLoc = LatLng(newPokemon.lat!!, newPokemon.lon!!)
+                                mMap!!.addMarker(
+                                    MarkerOptions()
+                                        .position(newPokemonLoc)
+                                        .title(newPokemon.name)
+                                        .snippet(newPokemon.myDescription)
+                                        .icon(BitmapDescriptorFactory.fromResource(newPokemon.image!!))
+                                )
+                            }
+
+                        }
                 }
                     Thread.sleep(1000)
                 } catch (ex: Exception){
@@ -176,5 +184,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    fun loadPokemon(){
+        listPokemon.add(
+            Pokemon("Charmander",
+            R.drawable.charmander, "This is Chalamander from Mtwara", -10.27792, 40.18863)
+        )
+        listPokemon.add(Pokemon("Bulbasaur",
+            R.drawable.bulbasaur, "This is Bulbasaur from Cassablanca", 33.57869, -7.67))
+        listPokemon.add(Pokemon("Squirtle",
+            R.drawable.squirtle , "This is Squirtle from Lubumbashi", -11.684049728038131, 27.485699924360183))
     }
 }
