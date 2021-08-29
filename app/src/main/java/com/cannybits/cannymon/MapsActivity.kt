@@ -90,7 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,3,3f,myLocation)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,3f,myLocation)
 
         var myThread = myThread()
         myThread.start()
@@ -159,7 +159,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         .title("Canny Bits")
                         .snippet("my current location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario)))
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,2f))
+                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,4f))
 
                        // show other pokemons
                         for (i in 0..listPokemon.size-1){
