@@ -160,13 +160,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                         mMap!!.clear()
                         //show me
-                    val dsm = LatLng(location!!.longitude, location!!.latitude)
+               /*     val dsm = LatLng(location!!.longitude, location!!.latitude)
                     mMap!!.addMarker(MarkerOptions()
                         .position(dsm)
                         .title("Canny Bits")
                         .snippet("my current location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario)))
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,4f))
+                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,4f)) */
 
                        // show other pokemons
                         for (i in 0..listPokemon.size-1){
