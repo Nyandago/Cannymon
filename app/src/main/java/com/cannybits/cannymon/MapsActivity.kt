@@ -31,6 +31,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var location: Location? = null
     var listPokemon = ArrayList<Pokemon>()
     var oldLocation : Location? = null
+    var playerPower = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,20 +161,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                         mMap!!.clear()
                         //show me
-               /*     val dsm = LatLng(location!!.longitude, location!!.latitude)
+                   val dsm = LatLng(location!!.longitude, location!!.latitude)
                     mMap!!.addMarker(MarkerOptions()
                         .position(dsm)
                         .title("Canny Bits")
                         .snippet("my current location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.mario)))
-                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,4f)) */
+                    mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(dsm,4f))
 
                        // show other pokemons
                         for (i in 0..listPokemon.size-1){
                             var newPokemon = listPokemon[i]
 
                             if (newPokemon.isCatch == false) {
-                                val newPokemonLoc = LatLng(newPokemon.lat!!, newPokemon.lon!!)
+                                val newPokemonLoc = LatLng(newPokemon.location!!.latitude, newPokemon.location!!.longitude)
                                 mMap!!.addMarker(
                                     MarkerOptions()
                                         .position(newPokemonLoc)
@@ -181,6 +182,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                         .snippet(newPokemon.myDescription + "Power: " +newPokemon!!.power)
                                         .icon(BitmapDescriptorFactory.fromResource(newPokemon.image!!))
                                 )
+                            }
+
+                            if(location!!.distanceTo(newPokemon.location)<2){
+                                newPokemon.isCatch = true
+                                listPokemon[i] = newPokemon
+                                playerPower += newPokemon.power!!
+                                Toast.makeText(applicationContext,"You catched new Pokemon, Your power is "+playerPower,Toast.LENGTH_LONG).show()
                             }
 
                         }

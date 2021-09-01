@@ -1,11 +1,12 @@
 package com.cannybits.cannymon
 
+import android.location.Location
+
 class Pokemon() {
     var name: String? = null
     var image: Int? = null
     var myDescription : String? = null
-    var lat: Double? = null
-    var lon: Double? = null
+    var location: Location? = null
     var isCatch: Boolean? = false
     var power: Double? = null
 
@@ -13,8 +14,9 @@ class Pokemon() {
        this.name = name
        this.image = image
        this.myDescription= myDesc
-       this.lat = lat
-       this.lon = lon
+       this.location = Location(name)
+       this.location!!.longitude = lon
+       this.location!!.latitude = lat
        this.power = power
        this.isCatch = false
    }
