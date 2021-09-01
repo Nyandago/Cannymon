@@ -30,6 +30,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var ACCESS_LOCATION = 123
     var location: Location? = null
     var listPokemon = ArrayList<Pokemon>()
+    var oldLocation : Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,9 +115,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    inner class MyLocationListener : LocationListener{
+    inner class MyLocationListener() : LocationListener{
 
-        constructor(){
+        init {
             location = Location("Start")
             location!!.longitude = 0.0
             location!!.latitude = 0.0
@@ -141,13 +142,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     inner class myThread : Thread {
         constructor():super(){
-
+            oldLocation = Location("Start")
+            oldLocation!!.longitude = 0.0
+            oldLocation!!.latitude = 0.0
         }
 
         override fun run(){
             while(true){
 
                 try {
+                    if(oldLocation!!.distanceTo(location)==0f){
+                        continue
+                    }
+                    oldLocation = location
                     runOnUiThread(){
 
 
@@ -171,7 +178,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                     MarkerOptions()
                                         .position(newPokemonLoc)
                                         .title(newPokemon.name)
-                                        .snippet(newPokemon.myDescription)
+                                        .snippet(newPokemon.myDescription + "Power: " +newPokemon!!.power)
                                         .icon(BitmapDescriptorFactory.fromResource(newPokemon.image!!))
                                 )
                             }
@@ -189,11 +196,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     fun loadPokemon(){
         listPokemon.add(
             Pokemon("Charmander",
-            R.drawable.charmander, "This is Chalamander from Mtwara", -10.27792, 40.18863)
+            R.drawable.charmander, 55.2,"This is Chalamander from Mtwara", -10.27792, 40.18863)
         )
         listPokemon.add(Pokemon("Bulbasaur",
-            R.drawable.bulbasaur, "This is Bulbasaur from Cassablanca", 33.57869, -7.67))
+            R.drawable.bulbasaur, 78.6,"This is Bulbasaur from Cassablanca", 33.57869, -7.67))
         listPokemon.add(Pokemon("Squirtle",
-            R.drawable.squirtle , "This is Squirtle from Lubumbashi", -11.684049728038131, 27.485699924360183))
+            R.drawable.squirtle , 96.5,"This is Squirtle from Lubumbashi", -11.684049728038131, 27.485699924360183))
     }
 }
